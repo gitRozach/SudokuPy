@@ -20,6 +20,9 @@ class SudokuMatrix:
     def __len__(self) -> int:
         return self.grid_rows * self.grid_columns
 
+    def get_item(self, x: int, y: int) -> str:
+        return self.grid[y][x]
+
     def insert(self, x: int, y: int, value: str) -> bool:
         if (x, y) in self.base_positions:
             return False
@@ -89,3 +92,24 @@ class SudokuMatrix:
                 if str(self.grid[y][x]) in self.input_values:
                     not_empty_positions.append((x, y))
         return tuple(not_empty_positions)
+
+    def grid(self) -> np.array:
+        return self.grid
+
+    def get_columns_count(self) -> int:
+        return self.grid_columns
+
+    def get_rows_count(self) -> int:
+        return self.grid_rows
+
+    def get_box_size(self) -> int:
+        return self.box_size
+
+    def get_empty_value(self) -> str:
+        return self.empty_value
+
+    def get_input_values(self) -> list:
+        return self.input_values
+
+    def get_base_positions(self) -> tuple:
+        return self.base_positions

@@ -1,4 +1,7 @@
 from SudokuMatrix import SudokuMatrix
+from SudokuGUI import SudokuGUI
+from PyQt5.QtWidgets import QApplication
+import sys
 
 
 def main():
@@ -27,9 +30,13 @@ def main():
     results = matrix.solve()
     print('Found %i solutions:' % len(results))
     for res in results:
-        print(res[6][2])
         print(res)
         print('Valid' if res.check() else 'Invalid')
+
+    app = QApplication(sys.argv)
+    gui = SudokuGUI(matrix)
+    gui.show()
+    sys.exit(app.exec())
 
 
 if __name__ == '__main__':
