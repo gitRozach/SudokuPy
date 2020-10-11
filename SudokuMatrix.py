@@ -14,6 +14,9 @@ class SudokuMatrix:
     def __str__(self) -> str:
         return str(self.grid)
 
+    def __eq__(self, other):
+        return other.get_grid() == self.get_grid() if isinstance(other, SudokuMatrix) else False
+
     def __getitem__(self, index) -> str:
         return self.grid[index]
 
@@ -93,7 +96,7 @@ class SudokuMatrix:
                     not_empty_positions.append((x, y))
         return tuple(not_empty_positions)
 
-    def grid(self) -> np.array:
+    def get_grid(self) -> np.array:
         return self.grid
 
     def get_columns_count(self) -> int:
