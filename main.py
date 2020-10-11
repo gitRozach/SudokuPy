@@ -1,5 +1,5 @@
 from SudokuMatrix import SudokuMatrix
-from SudokuGUI import SudokuGUI
+from SudokuWindow import SudokuWindow
 from PyQt5.QtWidgets import QApplication
 import sys
 
@@ -26,7 +26,7 @@ def main():
              [4, 0, 5, 0, 1, 0, 7, 0, 8]]
 
     app = QApplication(sys.argv)
-    gui = SudokuGUI(SudokuMatrix(grid1))
+    gui = SudokuWindow(SudokuMatrix(grid1))
     gui.show()
     sys.exit(app.exec())
 
