@@ -55,6 +55,24 @@ class SudokuMatrix:
                     return False
         return True
 
+    def get_collisions_at(self, x: int, y: int) -> tuple:
+        value_collisions = []
+        pos_value = self.grid[y][x]
+
+        for y1 in range(self.grid_rows):  # Check all vertical values except the current position
+            if y1 != y and self.grid[y1][x] == pos_value:
+                value_collisions.append((x, y1))
+        for x1 in range(self.grid_columns):  # Check all horizontal values except the current position
+            if x1 != x and self.grid[y][x1] == pos_value:
+                value_collisions.append((x1, y))
+        y0 = int((y // self.box_size) * self.box_size)  # Y-cell index
+        x0 = int((x // self.box_size) * self.box_size)  # X-cell index
+        for m in range(self.box_size):  # Check current cell except the current position
+            for n in range(self.box_size):
+                if (x0 + n, y0 + m) != (x, y) and self.grid[y0 + m][x0 + n] == pos_value:
+                    value_collisions.append((x0 + n, y0 + m))
+        return tuple(value_collisions)
+
     def check(self, ignore_empty_values: bool = False) -> bool:
         for y in range(self.grid_rows):
             for x in range(self.grid_columns):
@@ -65,7 +83,7 @@ class SudokuMatrix:
     def is_solved(self):
         return self.check(ignore_empty_values=False)
 
-    def solve(self, max_results: int = -1) -> list:
+    def solve(self, max_results: int = 1) -> tuple:
         results = []
         counter = [max_results]
 
@@ -86,7 +104,7 @@ class SudokuMatrix:
                         return
             return self.grid
         solve_rec()
-        return results
+        return tuple(results)
 
     def collect_value_positions(self) -> tuple:
         not_empty_positions = []

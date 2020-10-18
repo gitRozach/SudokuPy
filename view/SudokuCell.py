@@ -1,6 +1,6 @@
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QPushButton
-import SudokuWindow
+from view import SudokuWindow
 
 
 class SudokuCell(QPushButton):
@@ -21,9 +21,9 @@ class SudokuCell(QPushButton):
 
     def init_style_sheet(self):
         if self.is_base_item():
-            self.setStyleSheet('background-color: gray')
+            self.setStyleSheet('background-color: rgb(30, 144, 255)')
         else:
-            self.setStyleSheet('background-color: lightgray')
+            self.setStyleSheet('background-color: rgb(176, 226, 255)')
 
     def update_geometry(self):
         self.setGeometry(self.grid_x * self.parent.get_cell_size() + self.parent.get_offset_x(),
