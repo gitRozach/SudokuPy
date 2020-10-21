@@ -37,23 +37,6 @@ grid3 = [[8, 4, 3, 5, 6, 7, 2, 1, 9],
          [0, 0, 0, 0, 0, 0, 0, 0, 8],
          [1, 9, 8, 3, 4, 5, 7, 6, 2]]
 
-grid4 = [['E', -1, -1, 6, 4, 'D', -1, 5, -1, 8, -1, -1, -1, 'C', -1, 7],
-         [-1, 7, 5, 4, -1, -1, 'C', 'F', 'A', 'E', -1, -1, -1, 0, -1, -1],
-         [-1, -1, -1, 3, -1, -1, 0, 'A', -1, 'F', -1, -1, 4, -1, -1, -1],
-         [-1, 'A', -1, -1, -1, -1, -1, 8, -1, 0, -1, 6, -1, -1, 2, -1],
-         [-1, -1, -1, -1, 'A', -1, -1, -1, -1, -1, 7, -1, -1, 'F', -1, -1],
-         [-1, -1, 1, -1, -1, 0, -1, -1, 4, 6, -1, -1, 'A', -1, -1, -1],
-         [-1, 3, 9, 'A', -1, 1, -1, -1, 'E', 'B', -1, -1, 5, -1, 0, 4],
-         ['D', 'C', 2, -1, -1, 4, -1, 6, -1, -1, -1, 3, -1, -1, -1, -1],
-         ['C', -1, -1, -1, -1, 'A', -1, 4, -1, -1, -1, 9, -1, -1, 8, 'B'],
-         [-1, -1, 8, -1, -1, 'B', -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-         ['A', 'E', -1, -1, 3, 2, -1, -1, -1, 7, 8, -1, -1, 5, -1, -1],
-         [-1, -1, -1, -1, -1, -1, -1, 0, -1, 4, 6, -1, -1, 'D', -1, -1],
-         [-1, -1, 0, -1, 9, -1, 'D', -1, -1, -1, -1, -1, -1, -1, 'B', -1],
-         [5, 2, -1, 'E', 1, -1, 6, -1, -1, -1, -1, 4, -1, 3, -1, 'C'],
-         [-1, -1, -1, -1, -1, 8, -1, 7, -1, 'C', 9, -1, -1, -1, -1, 'D'],
-         [6, 'B', 7, -1, 'E', -1, -1, -1, 2, 'D', 3, -1, 'F', -1, -1, -1]]
-
 
 class SudokuController:
     def __init__(self):
@@ -80,13 +63,36 @@ class SudokuController:
                 return
 
     def on_check_button_pressed(self):
-        self.sudoku_window.check_sudoku()
+        # TODO Choose a solution according to the current input
+        chosen_solution = self.sudoku_matrix.get_solutions()[0]
+        for y in range(self.sudoku_matrix.get_rows_count()):
+            for x in range(self.sudoku_matrix.get_columns_count()):
+                if chosen_solution[y][x] == self.sudoku_matrix[y][x]:
+                    self.sudoku_window.get_cell(x, y).setStyleSheet('background-color: lightgreen')
+                else:
+                    self.sudoku_window.get_cell(x, y).setStyleSheet('background-color: red')
+                self.sudoku_window.qt_sleep(15)
 
     def on_solve_button_pressed(self):
-        self.sudoku_window.solve_sudoku()
+        if self.sudoku_matrix.is_solved():
+            return
+        # TODO Choose a solution according to the current input
+        chosen_solution = self.sudoku_matrix.get_solutions()[0]
+        self.sudoku_matrix = chosen_solution  # Prevents changes during solving process
+
+        for y in range(self.sudoku_matrix.get_rows_count()):
+            for x in range(self.sudoku_matrix.get_columns_count()):
+                current_cell = self.sudoku_window.get_cell(x, y)
+                if current_cell.is_base_item():
+                    continue
+                current_cell.setCheckable(False)
+                current_cell.setStyleSheet('background-color: lightgreen')
+                current_cell.setText(chosen_solution[y][x])
+                self.sudoku_window.qt_sleep(15)
 
     def on_hint_button_pressed(self):
-        self.sudoku_window.check_sudoku()
+        # TODO
+        pass
 
     def get_matrix(self) -> SudokuMatrix:
         return self.sudoku_matrix

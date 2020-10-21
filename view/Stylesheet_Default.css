@@ -1,0 +1,8 @@
+SudokuWindow {
+    background-color: rgb(176, 226, 255);
+}
+
+QPushButton {
+    background-color: rgb(30, 144, 255);
+    height: 40;
+}

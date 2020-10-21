@@ -10,6 +10,7 @@ class SudokuMatrix:
         self.empty_value = empty_value
         self.input_values = input_values if input_values else ['%i' % i for i in range(1, 10)]
         self.base_positions = self.collect_value_positions()
+        self.solutions = self.solve()
 
     def __str__(self) -> str:
         return str(self.grid)
@@ -134,3 +135,6 @@ class SudokuMatrix:
 
     def get_base_positions(self) -> tuple:
         return self.base_positions
+
+    def get_solutions(self):
+        return self.solutions

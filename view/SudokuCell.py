@@ -29,7 +29,7 @@ class SudokuCell(QPushButton):
 
     def set_value(self, value: str):
         self.value = value
-        self.setText(value if self.parent.sudoku.empty_value != value else '')
+        self.setText(value if self.parent.sudoku_matrix.empty_value != value else '')
 
     def is_base_item(self) -> bool:
         return self.base_item
