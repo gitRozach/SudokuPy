@@ -9,12 +9,11 @@ from SudokuMatrix import SudokuMatrix
 class SudokuWindow(QMainWindow):
     def __init__(self, matrix: SudokuMatrix, controller):
         super().__init__()
-        self.cell_size = 100
-        self.selected_cell = None
-
         self.sudoku_matrix = matrix
         self.sudoku_controller = controller
-        self.sudoku_cells = []
+        self.cell_size = 100
+        self.selected_cell = None
+        self.cells = []
         # Placeholder Root Widget
         self.root = QWidget()
         self.setCentralWidget(self.root)
@@ -63,7 +62,7 @@ class SudokuWindow(QMainWindow):
                 cell = SudokuCell(item, is_base_value, self, x, y)
                 cell.setFixedSize(self.cell_size, self.cell_size)
                 grid.addWidget(cell, y, x)
-                self.sudoku_cells.append(cell)
+                self.cells.append(cell)
         return grid
 
     def create_root_layout(self) -> QVBoxLayout:
@@ -84,15 +83,27 @@ class SudokuWindow(QMainWindow):
         self.sudoku_controller.on_key_pressed(event)
 
     def cell_pressed(self, x: int, y: int):
-        cell = self.sudoku_cells[y][x]
-        if not cell.isCheckable() or cell == self.selected_cell:
-            return
-        if self.selected_cell is not None:
-            self.selected_cell.setChecked(False)
-        self.selected_cell = cell
+        self.sudoku_controller.on_cell_pressed(x, y)
 
     def get_cell(self, x: int, y: int):
-        return self.sudoku_cells[y * self.sudoku_matrix.get_columns_count() + x]
+        return self.cells[y * self.sudoku_matrix.get_columns_count() + x]
 
     def get_cell_size(self) -> int:
         return self.cell_size
+
+    def get_selected_cell(self):
+        return self.selected_cell
+
+    def set_selected_cell(self, x: int, y: int):
+        if self.selected_cell:
+            self.selected_cell.setChecked(False)
+        self.selected_cell = self.get_cell(x, y)
+        self.selected_cell.setChecked(True)
+
+    def unselect_current_cell(self):
+        if not self.selected_cell:
+            return
+        self.selected_cell.setChecked(False)
+        self.selected_cell = None
+
+

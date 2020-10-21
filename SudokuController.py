@@ -40,29 +40,27 @@ grid3 = [[8, 4, 3, 5, 6, 7, 2, 1, 9],
 
 class SudokuController:
     def __init__(self):
-        self.sudoku_matrix = SudokuMatrix(grid2)
+        self.sudoku_matrix = SudokuMatrix(grid1)
         self.sudoku_window = SudokuWindow(self.sudoku_matrix, self)
 
     def on_key_pressed(self, key_event: QKeyEvent):
         key = key_event.key()
-        if self.sudoku_window.selected_cell:
+        if self.sudoku_window.get_selected_cell():
             value = key_event.text()
             if key == Qt.Key_Escape:
-                self.sudoku_window.selected_cell.setChecked(False)
-                self.sudoku_window.selected_cell = None
-                return
-            if value in self.sudoku_matrix.get_input_values():
+                self.sudoku_window.unselect_current_cell()
+            elif value in self.sudoku_matrix.get_input_values():
                 grid_x = self.sudoku_window.selected_cell.get_grid_x()
                 grid_y = self.sudoku_window.selected_cell.get_grid_y()
                 if self.sudoku_matrix.insert(grid_x, grid_y, value):
-                    self.sudoku_window.selected_cell.set_value(value)
+                    self.sudoku_window.get_selected_cell().set_value(value)
                 for c_x, c_y in self.sudoku_matrix.get_collisions_at(grid_x, grid_y):
-                    self.sudoku_window.sudoku_cells[c_y][c_x].setStyleSheet('background-color: red')
-                self.sudoku_window.selected_cell.setChecked(False)
-                self.sudoku_window.selected_cell = None
-                return
+                    self.sudoku_window.get_cell(c_x, c_y).setStyleSheet('background-color: red')
+                self.sudoku_window.unselect_current_cell()
 
     def on_check_button_pressed(self):
+        if self.sudoku_matrix.is_solved():
+            return
         # TODO Choose a solution according to the current input
         chosen_solution = self.sudoku_matrix.get_solutions()[0]
         for y in range(self.sudoku_matrix.get_rows_count()):
@@ -93,6 +91,12 @@ class SudokuController:
     def on_hint_button_pressed(self):
         # TODO
         pass
+
+    def on_cell_pressed(self, x: int, y: int):
+        cell = self.sudoku_window.get_cell(x, y)
+        if not cell.isCheckable() or cell == self.sudoku_window.get_selected_cell():
+            return
+        self.sudoku_window.set_selected_cell(x, y)
 
     def get_matrix(self) -> SudokuMatrix:
         return self.sudoku_matrix

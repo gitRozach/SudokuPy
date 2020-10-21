@@ -8,7 +8,7 @@ class SudokuMatrix:
         self.grid_rows = len(grid)
         self.box_size = box_size
         self.empty_value = empty_value
-        self.input_values = input_values if input_values else ['%i' % i for i in range(1, 10)]
+        self.input_values = input_values if input_values else ['%i' % i for i in range(1, box_size ** 2 + 1)]
         self.base_positions = self.collect_value_positions()
         self.solutions = self.solve()
 
@@ -23,9 +23,6 @@ class SudokuMatrix:
 
     def __len__(self) -> int:
         return self.grid_rows * self.grid_columns
-
-    def get_item(self, x: int, y: int) -> str:
-        return self.grid[y][x]
 
     def insert(self, x: int, y: int, value: str) -> bool:
         if (x, y) in self.base_positions:
@@ -55,6 +52,9 @@ class SudokuMatrix:
                 if (x0 + n, y0 + m) != (x, y) and str(self.grid[y0 + m][x0 + n]) == value:
                     return False
         return True
+
+    def get_item(self, x: int, y: int) -> str:
+        return self.grid[y][x]
 
     def get_collisions_at(self, x: int, y: int) -> tuple:
         value_collisions = []
