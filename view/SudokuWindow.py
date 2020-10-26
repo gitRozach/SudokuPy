@@ -2,8 +2,9 @@ from PyQt5.QtCore import Qt, QEventLoop, QTimer
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QMainWindow, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QWidget
 
-from view.SudokuCell import SudokuCell
+from view.widgets.SudokuCell import SudokuCell
 from SudokuMatrix import SudokuMatrix
+from view.widgets.SudokuCellBox import SudokuCellBox
 
 
 class SudokuWindow(QMainWindow):
@@ -29,10 +30,21 @@ class SudokuWindow(QMainWindow):
         self._init_window()
         self._init_button_slots()
 
-    def _init_window(self):
+    def update_cells(self, collision_positions: iter = ()):
+        for y in range(self.sudoku_matrix.get_rows_count()):
+            for x in range(self.sudoku_matrix.get_columns_count()):
+                current_cell = self.get_cell(x, y)
+                if (x, y) in collision_positions:
+                    current_cell.setStyleSheet('background-color: red;')
+                elif current_cell.is_base_item():
+                    current_cell.setStyleSheet('background-color: rgb(30, 144, 255);')
+                else:
+                    current_cell.setStyleSheet('background-color: rgb(176, 226, 255);')
+
+    def _init_window(self, style_sheet_path: str = 'view/stylesheets/style_default.css'):
         self.setWindowTitle('SudokuPy')
         try:
-            with open('view/Stylesheet_Default.css') as stylesheet_file:
+            with open(style_sheet_path) as stylesheet_file:
                 stylesheet_str = stylesheet_file.read()
                 self.setStyleSheet(stylesheet_str)
         except FileNotFoundError:
@@ -51,7 +63,7 @@ class SudokuWindow(QMainWindow):
         layout.addWidget(self.button_hint)
         return layout
 
-    def create_grid_layout(self) -> QGridLayout:
+    def create_grid_layout_alt(self) -> QGridLayout:
         grid = QGridLayout()
         grid.setSpacing(1)
         grid.setAlignment(Qt.AlignCenter)
@@ -63,6 +75,26 @@ class SudokuWindow(QMainWindow):
                 cell.setFixedSize(self.cell_size, self.cell_size)
                 grid.addWidget(cell, y, x)
                 self.cells.append(cell)
+        return grid
+
+    def create_grid_layout(self) -> QGridLayout:
+        grid = QGridLayout()
+        grid.setSpacing(10)
+        grid.setAlignment(Qt.AlignCenter)
+        box_size = self.sudoku_matrix.get_box_size()
+
+        for g_y in range(box_size):
+            for g_x in range(box_size):
+                box = SudokuCellBox(width=box_size, height=box_size)
+                for c_y in range(self.sudoku_matrix.get_box_size()):
+                    for c_x in range(self.sudoku_matrix.get_box_size()):
+                        item = self.sudoku_matrix.get_item(g_x * box_size + c_x, g_y * box_size + c_y)
+                        is_base_value = item != self.sudoku_matrix.get_empty_value()
+                        cell = SudokuCell(item, is_base_value, self, g_x * box_size + c_x, g_y * box_size + c_y)
+                        cell.setFixedSize(self.cell_size, self.cell_size)
+                        box.get_grid().addWidget(cell, c_y, c_x)
+                        grid.addWidget(box, g_y, g_x)
+                        self.cells.append(cell)
         return grid
 
     def create_root_layout(self) -> QVBoxLayout:
@@ -105,5 +137,3 @@ class SudokuWindow(QMainWindow):
             return
         self.selected_cell.setChecked(False)
         self.selected_cell = None
-
-

@@ -1,4 +1,5 @@
-from PyQt5.QtGui import QFont
+from PyQt5.QtCore import QPropertyAnimation
+from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtWidgets import QPushButton
 from view import SudokuWindow
 

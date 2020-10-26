@@ -1,6 +1,3 @@
 # Default ignored files
 /.idea/
-/__pycache__
-.idea/dictionaries/roman.xml
-.idea/dictionaries/roman.xml
-view/__pycache__/SudokuWindow.cpython-38.pyc
+/__pycache__/

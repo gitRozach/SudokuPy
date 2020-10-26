@@ -52,11 +52,10 @@ class SudokuController:
             elif value in self.sudoku_matrix.get_input_values():
                 grid_x = self.sudoku_window.selected_cell.get_grid_x()
                 grid_y = self.sudoku_window.selected_cell.get_grid_y()
-                if self.sudoku_matrix.insert(grid_x, grid_y, value):
-                    self.sudoku_window.get_selected_cell().set_value(value)
-                for c_x, c_y in self.sudoku_matrix.get_collisions_at(grid_x, grid_y):
-                    self.sudoku_window.get_cell(c_x, c_y).setStyleSheet('background-color: red')
+                collisions = self.sudoku_matrix.insert(grid_x, grid_y, value)
+                self.sudoku_window.get_selected_cell().set_value(value)
                 self.sudoku_window.unselect_current_cell()
+                self.sudoku_window.update_cells(collision_positions=collisions)
 
     def on_check_button_pressed(self):
         if self.sudoku_matrix.is_solved():
@@ -69,7 +68,7 @@ class SudokuController:
                     self.sudoku_window.get_cell(x, y).setStyleSheet('background-color: lightgreen')
                 else:
                     self.sudoku_window.get_cell(x, y).setStyleSheet('background-color: red')
-                self.sudoku_window.qt_sleep(15)
+                self.sudoku_window.qt_sleep(20)
 
     def on_solve_button_pressed(self):
         if self.sudoku_matrix.is_solved():
@@ -93,6 +92,7 @@ class SudokuController:
         pass
 
     def on_cell_pressed(self, x: int, y: int):
+        print(x, y)
         cell = self.sudoku_window.get_cell(x, y)
         if not cell.isCheckable() or cell == self.sudoku_window.get_selected_cell():
             return
