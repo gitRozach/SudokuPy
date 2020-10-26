@@ -1,7 +1,12 @@
-from PyQt5.QtCore import QPropertyAnimation
-from PyQt5.QtGui import QFont, QColor
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QPushButton
 from view import SudokuWindow
+
+
+BASE_CELL_COLOR = 'rgb(30, 144, 255)'
+INPUT_CELL_COLOR = 'rgb(176, 226, 255)'
+WRONG_CELL_COLOR = 'red'
+CORRECT_CELL_COLOR = 'lightgreen'
 
 
 class SudokuCell(QPushButton):
@@ -21,9 +26,9 @@ class SudokuCell(QPushButton):
 
     def init_style_sheet(self):
         if self.is_base_item():
-            self.setStyleSheet('background-color: rgb(30, 144, 255)')
+            self.setStyleSheet('background-color: %s' % BASE_CELL_COLOR)
         else:
-            self.setStyleSheet('background-color: rgb(176, 226, 255)')
+            self.setStyleSheet('background-color: %s' % INPUT_CELL_COLOR)
 
     def get_value(self) -> str:
         return self.value

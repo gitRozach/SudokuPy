@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt, QEventLoop, QTimer
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QMainWindow, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QWidget
 
-from view.widgets.SudokuCell import SudokuCell
+from view.widgets.SudokuCell import SudokuCell, BASE_CELL_COLOR, INPUT_CELL_COLOR, WRONG_CELL_COLOR
 from SudokuMatrix import SudokuMatrix
 from view.widgets.SudokuCellBox import SudokuCellBox
 
@@ -12,9 +12,9 @@ class SudokuWindow(QMainWindow):
         super().__init__()
         self.sudoku_matrix = matrix
         self.sudoku_controller = controller
-        self.cell_size = 100
+        self.cell_size = 80
         self.selected_cell = None
-        self.cells = []
+        self.cells = {}
         # Placeholder Root Widget
         self.root = QWidget()
         self.setCentralWidget(self.root)
@@ -35,11 +35,11 @@ class SudokuWindow(QMainWindow):
             for x in range(self.sudoku_matrix.get_columns_count()):
                 current_cell = self.get_cell(x, y)
                 if (x, y) in collision_positions:
-                    current_cell.setStyleSheet('background-color: red;')
+                    current_cell.setStyleSheet('background-color: %s;' % WRONG_CELL_COLOR)
                 elif current_cell.is_base_item():
-                    current_cell.setStyleSheet('background-color: rgb(30, 144, 255);')
+                    current_cell.setStyleSheet('background-color: %s;' % BASE_CELL_COLOR)
                 else:
-                    current_cell.setStyleSheet('background-color: rgb(176, 226, 255);')
+                    current_cell.setStyleSheet('background-color: %s;' % INPUT_CELL_COLOR)
 
     def _init_window(self, style_sheet_path: str = 'view/stylesheets/style_default.css'):
         self.setWindowTitle('SudokuPy')
@@ -63,20 +63,6 @@ class SudokuWindow(QMainWindow):
         layout.addWidget(self.button_hint)
         return layout
 
-    def create_grid_layout_alt(self) -> QGridLayout:
-        grid = QGridLayout()
-        grid.setSpacing(1)
-        grid.setAlignment(Qt.AlignCenter)
-        for y in range(self.sudoku_matrix.get_rows_count()):
-            for x in range(self.sudoku_matrix.get_columns_count()):
-                item = self.sudoku_matrix.get_item(x, y)
-                is_base_value = item != self.sudoku_matrix.get_empty_value()
-                cell = SudokuCell(item, is_base_value, self, x, y)
-                cell.setFixedSize(self.cell_size, self.cell_size)
-                grid.addWidget(cell, y, x)
-                self.cells.append(cell)
-        return grid
-
     def create_grid_layout(self) -> QGridLayout:
         grid = QGridLayout()
         grid.setSpacing(10)
@@ -88,13 +74,14 @@ class SudokuWindow(QMainWindow):
                 box = SudokuCellBox(width=box_size, height=box_size)
                 for c_y in range(self.sudoku_matrix.get_box_size()):
                     for c_x in range(self.sudoku_matrix.get_box_size()):
+                        print(g_x * box_size + c_x, g_y * box_size + c_y)
                         item = self.sudoku_matrix.get_item(g_x * box_size + c_x, g_y * box_size + c_y)
                         is_base_value = item != self.sudoku_matrix.get_empty_value()
                         cell = SudokuCell(item, is_base_value, self, g_x * box_size + c_x, g_y * box_size + c_y)
                         cell.setFixedSize(self.cell_size, self.cell_size)
                         box.get_grid().addWidget(cell, c_y, c_x)
-                        grid.addWidget(box, g_y, g_x)
-                        self.cells.append(cell)
+                        self.cells[(g_x * box_size + c_x, g_y * box_size + c_y)] = cell
+                grid.addWidget(box, g_y, g_x)
         return grid
 
     def create_root_layout(self) -> QVBoxLayout:
@@ -118,7 +105,7 @@ class SudokuWindow(QMainWindow):
         self.sudoku_controller.on_cell_pressed(x, y)
 
     def get_cell(self, x: int, y: int):
-        return self.cells[y * self.sudoku_matrix.get_columns_count() + x]
+        return self.cells.get((x, y))
 
     def get_cell_size(self) -> int:
         return self.cell_size

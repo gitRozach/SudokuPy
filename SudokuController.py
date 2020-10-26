@@ -6,6 +6,7 @@ from view.SudokuWindow import SudokuWindow
 from PyQt5.QtWidgets import QApplication
 import sys
 
+from view.widgets.SudokuCell import CORRECT_CELL_COLOR, WRONG_CELL_COLOR, BASE_CELL_COLOR
 
 grid1 = [[0, 0, 0, 2, 6, 0, 7, 0, 1],
          [6, 8, 0, 0, 7, 0, 0, 9, 0],
@@ -65,9 +66,9 @@ class SudokuController:
         for y in range(self.sudoku_matrix.get_rows_count()):
             for x in range(self.sudoku_matrix.get_columns_count()):
                 if chosen_solution[y][x] == self.sudoku_matrix[y][x]:
-                    self.sudoku_window.get_cell(x, y).setStyleSheet('background-color: lightgreen')
+                    self.sudoku_window.get_cell(x, y).setStyleSheet('background-color: %s;' % CORRECT_CELL_COLOR)
                 else:
-                    self.sudoku_window.get_cell(x, y).setStyleSheet('background-color: red')
+                    self.sudoku_window.get_cell(x, y).setStyleSheet('background-color: %s;' % WRONG_CELL_COLOR)
                 self.sudoku_window.qt_sleep(20)
 
     def on_solve_button_pressed(self):
@@ -81,9 +82,10 @@ class SudokuController:
             for x in range(self.sudoku_matrix.get_columns_count()):
                 current_cell = self.sudoku_window.get_cell(x, y)
                 if current_cell.is_base_item():
+                    current_cell.setStyleSheet('background-color: %s;' % BASE_CELL_COLOR)
                     continue
                 current_cell.setCheckable(False)
-                current_cell.setStyleSheet('background-color: lightgreen')
+                current_cell.setStyleSheet('background-color: %s;' % CORRECT_CELL_COLOR)
                 current_cell.setText(chosen_solution[y][x])
                 self.sudoku_window.qt_sleep(15)
 

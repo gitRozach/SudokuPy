@@ -3,6 +3,32 @@ SudokuWindow {
 }
 
 QPushButton {
+    border-width: 4px;
+    border-color: darkblue;
+    border-radius: 30;
+    background-radius: 30;
+    background-color: rgb(30, 144, 255);
+    height: 40;
+}
+
+QPushButton #button_check{
+    background-color: red;
+    border-radius: 30;
+    background-radius: 30;
+    background-color: rgb(30, 144, 255);
+    height: 40;
+}
+
+QPushButton #button_solve{
+    border-radius: 30;
+    background-radius: 30;
+    background-color: rgb(30, 144, 255);
+    height: 40;
+}
+
+QPushButton #button_hint{
+    border-radius: 30;
+    background-radius: 30;
     background-color: rgb(30, 144, 255);
     height: 40;
 }
