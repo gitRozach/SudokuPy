@@ -34,12 +34,14 @@ class SudokuWindow(QMainWindow):
         for y in range(self.sudoku_matrix.get_rows_count()):
             for x in range(self.sudoku_matrix.get_columns_count()):
                 current_cell = self.get_cell(x, y)
-                if (x, y) in collision_positions:
-                    current_cell.setStyleSheet('background-color: %s;' % WRONG_CELL_COLOR)
+                if current_cell == self.sudoku_matrix.get_empty_value():
+                    current_cell.set_color(INPUT_CELL_COLOR)
+                elif (x, y) in collision_positions:
+                    current_cell.set_color(WRONG_CELL_COLOR)
                 elif current_cell.is_base_item():
-                    current_cell.setStyleSheet('background-color: %s;' % BASE_CELL_COLOR)
+                    current_cell.set_color(BASE_CELL_COLOR)
                 else:
-                    current_cell.setStyleSheet('background-color: %s;' % INPUT_CELL_COLOR)
+                    current_cell.set_color(INPUT_CELL_COLOR)
 
     def _init_window(self, style_sheet_path: str = 'view/stylesheets/style_default.css'):
         self.setWindowTitle('SudokuPy')
@@ -74,7 +76,6 @@ class SudokuWindow(QMainWindow):
                 box = SudokuCellBox(width=box_size, height=box_size)
                 for c_y in range(self.sudoku_matrix.get_box_size()):
                     for c_x in range(self.sudoku_matrix.get_box_size()):
-                        print(g_x * box_size + c_x, g_y * box_size + c_y)
                         item = self.sudoku_matrix.get_item(g_x * box_size + c_x, g_y * box_size + c_y)
                         is_base_value = item != self.sudoku_matrix.get_empty_value()
                         cell = SudokuCell(item, is_base_value, self, g_x * box_size + c_x, g_y * box_size + c_y)
@@ -124,3 +125,6 @@ class SudokuWindow(QMainWindow):
             return
         self.selected_cell.setChecked(False)
         self.selected_cell = None
+
+    def get_matrix(self):
+        return self.sudoku_matrix

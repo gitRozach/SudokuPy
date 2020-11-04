@@ -10,7 +10,7 @@ class SudokuMatrix:
         self.grid_rows = len(grid)
         self.box_size = box_size
         self.empty_value = empty_value
-        self.input_values = input_values if input_values else ['%i' % i for i in range(1, box_size ** 2 + 1)]
+        self.input_values = input_values if input_values else ['%s' % i for i in range(1, box_size ** 2 + 1)]
         self.base_positions = self.collect_value_positions()
         self.solutions = self.solve(copy(self))
 
@@ -29,7 +29,7 @@ class SudokuMatrix:
     def insert(self, x: int, y: int, value: str):
         if (x, y) not in self.base_positions:
             self.grid[y][x] = value
-            return self.get_collisions_at(x, y)
+            return self.get_collisions_at(x, y) if value != self.empty_value else ()
 
     def replace(self, x: int, y: int, value: str) -> bool:
         return self.insert(x, y, value) is not None
@@ -46,8 +46,8 @@ class SudokuMatrix:
         for x1 in range(self.grid_columns):  # Check all horizontal values except the current position
             if (x1, y) != (x, y) and str(self.grid[y][x1]) == value:
                 return False
-        y0 = int((y // self.box_size) * self.box_size)  # Y-cell index
-        x0 = int((x // self.box_size) * self.box_size)  # X-cell index
+        y0 = int((y // self.box_size) * self.box_size)  # Y-cell-box index
+        x0 = int((x // self.box_size) * self.box_size)  # X-cell-box index
         for m in range(self.box_size):  # Check current cell except the current position
             for n in range(self.box_size):
                 if (x0 + n, y0 + m) != (x, y) and str(self.grid[y0 + m][x0 + n]) == value:
@@ -56,6 +56,16 @@ class SudokuMatrix:
 
     def get_item(self, x: int, y: int) -> str:
         return self.grid[y][x]
+
+    def get_next_input_for(self, x: int, y: int) -> str:
+        if self.grid[y][x] == self.empty_value:
+            return self.input_values[0]
+        return self.input_values[(self.input_values.index(self.grid[y][x]) + 1) % len(self.input_values)]
+
+    def get_previous_input_for(self, x: int, y: int) -> str:
+        if self.grid[y][x] == self.empty_value:
+            return self.input_values[-1]
+        return self.input_values[(self.input_values.index(self.grid[y][x]) - 1) % len(self.input_values)]
 
     def get_collisions_at(self, x: int, y: int) -> tuple:
         value_collisions = []
